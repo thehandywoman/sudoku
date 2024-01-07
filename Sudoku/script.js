@@ -11,7 +11,6 @@ window.onload = function () {
 };
 
 function setGame() {
-  // Digits 1-9
   for (let i = 1; i <= 9; i++) {
     let number = document.createElement("div");
     number.id = i;
@@ -21,7 +20,6 @@ function setGame() {
     document.getElementById("digits").appendChild(number);
   }
 
-  // Board 9x9
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       let tile = document.createElement("div");
@@ -42,12 +40,10 @@ function setGame() {
     }
   }
 
-// Dodaj kontener dla przycisku "Sprawdź"
 let checkButtonContainer = document.createElement("div");
 checkButtonContainer.id = "check-button-container";
 document.getElementById("but").appendChild(checkButtonContainer);
 
-// Dodaj przycisk "Sprawdź" do kontenera
 let checkButton = document.createElement("button");
 checkButton.innerText = "Sprawdź";
 checkButton.addEventListener("click", checkSolution);
@@ -237,7 +233,7 @@ function checkSolution() {
     let tile = boardElements[i];
 
     if (tile.classList.contains("tile-start")) {
-      continue; // Pomiń komórki startowe
+      continue; 
     }
 
     let coords = tile.id.split("-");
@@ -250,7 +246,6 @@ function checkSolution() {
   }
 
   if (errors > 0) {
-    // Zwiększ licznik błędów tylko, jeśli istnieją błędy
     document.getElementById("errors").innerText = parseInt(document.getElementById("errors").innerText) + 1;
   }
 
