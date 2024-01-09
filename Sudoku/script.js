@@ -1,29 +1,74 @@
 var numSelected = null;
 var tileSelected = null;
 var errors = 0;
+var difficultyLevel = "easy"; // Domyślny poziom trudności
 
 var board = generateRandomSudoku();
 var solution = [...board.map(row => [...row])];
-var playerBoard = createPlayerBoard(board);
+var playerBoard = createPlayerBoard(board, difficultyLevel);
 
 window.onload = function () {
+  addDifficultyButtons(); // Dodaj przyciski poziomów trudności
   setGame();
 };
 
-function setGame() {
-  for (let i = 1; i <= 9; i++) {
-    let number = document.createElement("div");
-    number.id = i;
-    number.innerText = i;
-    number.addEventListener("click", selectNumber);
-    number.classList.add("number");
-    document.getElementById("digits").appendChild(number);
+function addDifficultyButtons() {
+  let difficultyContainer = document.getElementById("difficulty");
+
+  let easyButton = document.createElement("button");
+  easyButton.innerText = "Łatwy";
+  easyButton.addEventListener("click", function () {
+    changeDifficulty("easy");
+  });
+  difficultyContainer.appendChild(easyButton);
+
+  let mediumButton = document.createElement("button");
+  mediumButton.innerText = "Średni";
+  mediumButton.addEventListener("click", function () {
+    changeDifficulty("medium");
+  });
+  difficultyContainer.appendChild(mediumButton);
+
+  let hardButton = document.createElement("button");
+  hardButton.innerText = "Trudny";
+  hardButton.addEventListener("click", function () {
+    changeDifficulty("hard");
+  });
+  difficultyContainer.appendChild(hardButton);
+}
+
+function changeDifficulty(difficulty) {
+  difficultyLevel = difficulty;
+  resetGame(); // Zresetuj grę po zmianie poziomu trudności
+}
+
+function resetGame() {
+  clearBoard();
+  board = generateRandomSudoku();
+  solution = [...board.map(row => [...row])];
+  playerBoard = createPlayerBoard(board, difficultyLevel);
+  setGame();
+}
+
+function clearBoard() {
+  let boardContainer = document.getElementById("board");
+  while (boardContainer.firstChild) {
+    boardContainer.removeChild(boardContainer.firstChild);
   }
 
+  let checkButtonContainer = document.getElementById("check-button-container");
+  if (checkButtonContainer) {
+    checkButtonContainer.remove();
+  }
+}
+
+function setGame() {
+  // Board 9x9
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       let tile = document.createElement("div");
       tile.id = r.toString() + "-" + c.toString();
+      tile.contentEditable = playerBoard[r][c] === 0; // Ustaw wartość na edytowalną tylko dla pustych pól
       tile.innerText = playerBoard[r][c] !== 0 ? playerBoard[r][c] : ""; // Puste kratki zamiast zer
       if (playerBoard[r][c] !== 0) {
         tile.classList.add("tile-start");
@@ -35,20 +80,23 @@ function setGame() {
         tile.classList.add("vertical-line");
       }
       tile.addEventListener("click", selectTile);
+      tile.addEventListener("input", inputNumber);
       tile.classList.add("tile");
       document.getElementById("board").appendChild(tile);
     }
   }
 
-let checkButtonContainer = document.createElement("div");
-checkButtonContainer.id = "check-button-container";
-document.getElementById("but").appendChild(checkButtonContainer);
+  // Dodaj kontener dla przycisku "Sprawdź"
+  let checkButtonContainer = document.createElement("div");
+  checkButtonContainer.id = "check-button-container";
+  document.getElementById("but").appendChild(checkButtonContainer);
 
-let checkButton = document.createElement("button");
-checkButton.innerText = "Sprawdź";
-checkButton.addEventListener("click", checkSolution);
-checkButton.classList.add("buttonc");
-checkButtonContainer.appendChild(checkButton);
+  // Dodaj przycisk "Sprawdź" do kontenera
+  let checkButton = document.createElement("button");
+  checkButton.innerText = "Sprawdź";
+  checkButton.addEventListener("click", checkSolution);
+  checkButton.classList.add("buttonc");
+  checkButtonContainer.appendChild(checkButton);
 }
 
 function getRandomDigit() {
@@ -188,17 +236,52 @@ function selectTile() {
   }
 }
 
-function createPlayerBoard(board) {
-  const playerBoard = board.map(row => row.slice());
-  const numberOfZeros = Math.floor(Math.random() * 15) + 20;
+function inputNumber(event) {
+  let inputValue = event.target.innerText;
+  let coords = event.target.id.split("-");
+  let r = parseInt(coords[0]);
+  let c = parseInt(coords[1]);
 
-  for (let i = 0; i < numberOfZeros; i++) {
-    const row = Math.floor(Math.random() * 9);
-    const col = Math.floor(Math.random() * 9);
-    playerBoard[row][col] = 0;
+  if (!isValidInput(inputValue)) {
+    // Jeśli wartość nie jest cyfrą, zresetuj pole
+    event.target.innerText = "";
+    playerBoard[r][c] = 0;
+  } else {
+    playerBoard[r][c] = parseInt(inputValue);
+  }
+}
+
+function isValidInput(value) {
+  // Sprawdź, czy wartość jest cyfrą od 1 do 9
+  return /^\d$/.test(value) && parseInt(value) >= 1 && parseInt(value) <= 9;
+}
+
+function createPlayerBoard(board, difficulty) {
+  const playerBoard = board.map(row => row.slice());
+
+  switch (difficulty) {
+    case "easy":
+      hideNumbers(playerBoard, 25);
+      break;
+    case "medium":
+      hideNumbers(playerBoard, 50);
+      break;
+    case "hard":
+      hideNumbers(playerBoard, 70);
+      break;
+    default:
+      break;
   }
 
   return playerBoard;
+}
+
+function hideNumbers(board, numberOfHiddenNumbers) {
+  for (let i = 0; i < numberOfHiddenNumbers; i++) {
+    const row = Math.floor(Math.random() * 9);
+    const col = Math.floor(Math.random() * 9);
+    board[row][col] = 0;
+  }
 }
 
 function getUserBoard() {
@@ -225,31 +308,70 @@ function compareBoards(board1, board2) {
 }
 
 function checkSolution() {
-  let boardElements = document.getElementById("board").getElementsByTagName("div");
   let userBoard = getUserBoard();
   let errors = 0;
 
-  for (let i = 0; i < boardElements.length; i++) {
-    let tile = boardElements[i];
-
-    if (tile.classList.contains("tile-start")) {
-      continue; 
-    }
-
-    let coords = tile.id.split("-");
-    let r = parseInt(coords[0]);
-    let c = parseInt(coords[1]);
-
-    if (tile.innerText !== solution[r][c]) {
-      errors += 1;
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (userBoard[r][c] !== solution[r][c]) {
+        errors += 1;
+      }
     }
   }
 
   if (errors > 0) {
+    // Zwiększ licznik błędów tylko, jeśli istnieją błędy
     document.getElementById("errors").innerText = parseInt(document.getElementById("errors").innerText) + 1;
   }
 
-  if (compareBoards(userBoard, solution)) {
+  if (errors === 0 && compareBoards(userBoard, solution)) {
+    alert("Rozwiązanie poprawne!");
+  } else {
+    alert("Rozwiązanie błędne.");
+  }
+}
+
+
+function getUserBoard() {
+  const userBoard = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      let tile = document.getElementById(r + "-" + c);
+      userBoard[r][c] = tile.innerText !== "" ? parseInt(tile.innerText) : 0;
+    }
+  }
+  return userBoard;
+}
+function compareBoards(board1, board2) {
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (board1[r][c] !== board2[r][c]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function checkSolution() {
+  let userBoard = getUserBoard();
+  let errors = 0;
+
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (userBoard[r][c] !== solution[r][c]) {
+        errors += 1;
+      }
+    }
+  }
+
+  if (errors > 0) {
+    // Zwiększ licznik błędów tylko, jeśli istnieją błędy
+    document.getElementById("errors").innerText = parseInt(document.getElementById("errors").innerText) + 1;
+  }
+
+  if (errors === 0 && compareBoards(userBoard, solution)) {
     alert("Rozwiązanie poprawne!");
   } else {
     alert("Rozwiązanie błędne.");
