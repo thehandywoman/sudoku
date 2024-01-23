@@ -54,8 +54,16 @@ This is the basic version of sudoku board. The photo shows the easy version of t
 For those who prefer darkness, there is a dark mode. It's enough that we tire our minds, we don't have to strain our eyes.
 ![Sudoku board - light wersion](./images/Sudoku2.png)
 
-A switch in the top corner allows you to easily change the mode.
+A switch in the top corner allows you to easily change the mode. <br>
 ![Sudoku board - light wersion](./images/Sudoku3.png)
 
 One of the most interesting things is the error counter. Thanks to it, after completing the board, we can check whether we have made a mistake anywhere. If there is an error somewhere, we will receive a message about an incorrect solution and the error counter will add an "error point".
 ![Sudoku board - light wersion](./images/Sudoku4.png)
+
+## Inspiration
+
+I was inspired to create the game by a YouTube tutorial from Kenny Yip Coding "How to Build Sudoku JavaScript Tutorial" (https://youtu.be/S4uRtTb8U-U?si=RxQxLsh92KmRPA0N). In this guide, the game board was hard-coded, so I updated the JS code that generates the boards randomly. I managed to add a dark and light theme with the help of a long-overhauled "JavaScript Web Projects" course.
+
+## Comments
+
+At last, the application still leaves a lot of room for development, which I will certainly devote more time to in the future.
