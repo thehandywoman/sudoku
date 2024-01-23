@@ -1,26 +1,39 @@
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width initial-scale=1.0 user-scalable=no">
         <title>Sudoku</title>
-
+    	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
         <link rel="stylesheet" href="styles.css">
-        <script src="script.js"></script>
+
     </head>
 
-    <body>
-        <h1>Sudoku</h1>
+    <body>		
+		<nav class="navigation">
+		<div class="first-item">
+		<a href="" >Projekt</a>
+		</div>
+		</nav>
+		<div class="theme-switch-wrapper">
+        <span id="toggle-icon">
+            <span class="toggle-text">Light Mode</span>
+            <i class="fas fa-sun"></i>
+        </span>
+        <label class="theme-switch">
+            <input type="checkbox">
+            <div class="slider round"></div>
+        </label>
+   </div>
+		
+        <h1 class="title">Sudoku</h1>
         <hr>
         <h2 id="errors">0</h2>
 
         <!-- 9x9 board -->
         <div id="difficulty"></div>
-        <br>
         <div id="board"></div>
-        <br>
         <div id="but"></div>    
-
+<script src="script.js"></script>
     </body>
-
-
 </html>

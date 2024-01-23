@@ -1,14 +1,13 @@
 var numSelected = null;
 var tileSelected = null;
 var errors = 0;
-var difficultyLevel = "easy"; // Domyślny poziom trudności
-
+var difficultyLevel = "easy"; 
 var board = generateRandomSudoku();
 var solution = [...board.map(row => [...row])];
 var playerBoard = createPlayerBoard(board, difficultyLevel);
 
 window.onload = function () {
-  addDifficultyButtons(); // Dodaj przyciski poziomów trudności
+  addDifficultyButtons();
   setGame();
 };
 
@@ -17,6 +16,7 @@ function addDifficultyButtons() {
 
   let easyButton = document.createElement("button");
   easyButton.innerText = "Łatwy";
+  easyButton.classList.add("difficulty-button");
   easyButton.addEventListener("click", function () {
     changeDifficulty("easy");
   });
@@ -24,6 +24,7 @@ function addDifficultyButtons() {
 
   let mediumButton = document.createElement("button");
   mediumButton.innerText = "Średni";
+  mediumButton.classList.add("difficulty-button");
   mediumButton.addEventListener("click", function () {
     changeDifficulty("medium");
   });
@@ -31,15 +32,17 @@ function addDifficultyButtons() {
 
   let hardButton = document.createElement("button");
   hardButton.innerText = "Trudny";
+  hardButton.classList.add("difficulty-button"); 
   hardButton.addEventListener("click", function () {
     changeDifficulty("hard");
   });
   difficultyContainer.appendChild(hardButton);
 }
 
+
 function changeDifficulty(difficulty) {
   difficultyLevel = difficulty;
-  resetGame(); // Zresetuj grę po zmianie poziomu trudności
+  resetGame(); 
 }
 
 function resetGame() {
@@ -63,13 +66,13 @@ function clearBoard() {
 }
 
 function setGame() {
-  // Board 9x9
+
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       let tile = document.createElement("div");
       tile.id = r.toString() + "-" + c.toString();
-      tile.contentEditable = playerBoard[r][c] === 0; // Ustaw wartość na edytowalną tylko dla pustych pól
-      tile.innerText = playerBoard[r][c] !== 0 ? playerBoard[r][c] : ""; // Puste kratki zamiast zer
+      tile.contentEditable = playerBoard[r][c] === 0; 
+      tile.innerText = playerBoard[r][c] !== 0 ? playerBoard[r][c] : ""; 
       if (playerBoard[r][c] !== 0) {
         tile.classList.add("tile-start");
       }
@@ -86,12 +89,10 @@ function setGame() {
     }
   }
 
-  // Dodaj kontener dla przycisku "Sprawdź"
   let checkButtonContainer = document.createElement("div");
   checkButtonContainer.id = "check-button-container";
   document.getElementById("but").appendChild(checkButtonContainer);
 
-  // Dodaj przycisk "Sprawdź" do kontenera
   let checkButton = document.createElement("button");
   checkButton.innerText = "Sprawdź";
   checkButton.addEventListener("click", checkSolution);
@@ -243,7 +244,6 @@ function inputNumber(event) {
   let c = parseInt(coords[1]);
 
   if (!isValidInput(inputValue)) {
-    // Jeśli wartość nie jest cyfrą, zresetuj pole
     event.target.innerText = "";
     playerBoard[r][c] = 0;
   } else {
@@ -252,7 +252,6 @@ function inputNumber(event) {
 }
 
 function isValidInput(value) {
-  // Sprawdź, czy wartość jest cyfrą od 1 do 9
   return /^\d$/.test(value) && parseInt(value) >= 1 && parseInt(value) <= 9;
 }
 
@@ -296,42 +295,6 @@ function getUserBoard() {
   return userBoard;
 }
 
-function compareBoards(board1, board2) {
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      if (board1[r][c] !== board2[r][c]) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-function checkSolution() {
-  let userBoard = getUserBoard();
-  let errors = 0;
-
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      if (userBoard[r][c] !== solution[r][c]) {
-        errors += 1;
-      }
-    }
-  }
-
-  if (errors > 0) {
-    // Zwiększ licznik błędów tylko, jeśli istnieją błędy
-    document.getElementById("errors").innerText = parseInt(document.getElementById("errors").innerText) + 1;
-  }
-
-  if (errors === 0 && compareBoards(userBoard, solution)) {
-    alert("Rozwiązanie poprawne!");
-  } else {
-    alert("Rozwiązanie błędne.");
-  }
-}
-
-
 function getUserBoard() {
   const userBoard = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
 
@@ -367,7 +330,6 @@ function checkSolution() {
   }
 
   if (errors > 0) {
-    // Zwiększ licznik błędów tylko, jeśli istnieją błędy
     document.getElementById("errors").innerText = parseInt(document.getElementById("errors").innerText) + 1;
   }
 
@@ -375,5 +337,52 @@ function checkSolution() {
     alert("Rozwiązanie poprawne!");
   } else {
     alert("Rozwiązanie błędne.");
+  }
+}
+
+
+// dark-light mode
+
+const toggleSwitch = document.querySelector('input[type="checkbox"]');
+const toggleIcon = document.getElementById('toggle-icon');
+const nav = document.querySelector('.navigation');
+
+function darkMode() {
+  nav.style.backgroundColor = 'Dark Mode';
+  toggleIcon.children[0].textContent = 'Dark Mode';
+  toggleIcon.children[1].classList.replace('fa-sun', 'fa-moon');
+}
+
+// Light Mode Styles
+function lightMode() {
+  nav.style.backgroundColor = 'Light Mode';
+  toggleIcon.children[0].textContent = 'Light Mode';
+  toggleIcon.children[1].classList.replace('fa-moon', 'fa-sun');
+}
+
+// Switch Theme Dynamically
+function switchTheme(event) {
+  if (event.target.checked) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+    darkMode();
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+    lightMode();
+  }
+}
+
+// Event Listener
+toggleSwitch.addEventListener('change', switchTheme);
+
+// Check Local Storage For Theme
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+
+  if (currentTheme === 'dark') {
+    toggleSwitch.checked = true;
+    darkMode();
   }
 }
