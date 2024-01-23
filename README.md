@@ -45,3 +45,17 @@ The checkSolution() function compares the user-entered board with the correct so
 ### Dark/Light Mode
 
 Users can switch between dark and light modes using a button. User preferences for the mode are stored in localStorage.
+
+## Screens
+
+This is the basic version of sudoku board. The photo shows the easy version of the game.
+![Sudoku board - light wersion](./images/Sudoku1.png)
+
+For those who prefer darkness, there is a dark mode. It's enough that we tire our minds, we don't have to strain our eyes.
+![Sudoku board - light wersion](./images/Sudoku2.png)
+
+A switch in the top corner allows you to easily change the mode.
+![Sudoku board - light wersion](./images/Sudoku3.png)
+
+One of the most interesting things is the error counter. Thanks to it, after completing the board, we can check whether we have made a mistake anywhere. If there is an error somewhere, we will receive a message about an incorrect solution and the error counter will add an "error point".
+![Sudoku board - light wersion](./images/Sudoku4.png)
